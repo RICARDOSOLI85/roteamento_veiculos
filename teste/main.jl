@@ -23,6 +23,7 @@ include("copia.jl")
 include("matriz.jl")
 include("tempo.jl")
 include("instancias.jl")
+include("unroll.jl")
 include("modelo.jl")
 # 0. leitura dos parametros 
 df_parametros = dataframe_parametros(arquivo::String)
@@ -43,6 +44,7 @@ matriz_tempo = calcular_matriz_tempo(c::Matrix{Float64},df::DataFrame,df_paramet
 instancias = calcular_instancias(c::Matrix{Float64},df::DataFrame,df_parametros::DataFrame,matriz_tempo::Matrix{Float64})
 
 
+
 #---------------------------------------------------------------------------------
 # B Implementar o modelo e Imprimir os resultados 
 #--------------------------------------------------------------------------------
@@ -52,7 +54,7 @@ for gama in Gama
     for delta in Delta
         println("Testar com delta (δ=$delta)")
         
-       minimiza_robusto(delta::Int64,gama::Int64,instancias)
+         minimiza_robusto(delta::Int64,gama::Int64,instancias)
            
     end
        

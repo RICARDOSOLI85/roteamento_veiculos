@@ -12,11 +12,11 @@ using Gurobi
 TBW
 """
 function minimiza_robusto(delta::Int64,gama::Int64,instancias)
-    
-    # extrair os valores dos Data Frames 
+
+    # desenrolar 
     include("unroll.jl")
-    unroll(instancias)
-    n, nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s =  unroll(instancias)
+    n, nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unroll(instancias)
+    
     
     # numero de Vértices 
     #n = nV
@@ -43,10 +43,11 @@ function minimiza_robusto(delta::Int64,gama::Int64,instancias)
         w[i=1:n, l=1:nL]>=0            # Tempo em que o serviço em 'i' começa no modo 'l'
         y[k=1:nK,l=1:nL], Bin          # Se a rota 'k' é no modo 'l'
         z[i=1:n,k=1:nK,l=1:nL], Bin    # Var. Bin. se o cliente 'i' é associado a rota 'k' modo 'l' 
-        alfa[i=2:n,k=1:nK,l=1:nL] >= 0 # Variáveis de decisão α alpha do modelo Robusto 
+        alfa[i=1:n,k=1:nK,l=1:nL] >= 0 # Variáveis de decisão α alpha do modelo Robusto 
         beta[k=1:nK, l=1:nL] >= 0      # Variáveis de decisão β beta do modelo Robusto 
     end)
     println(" Numero de Variáveis =  ", num_variables(modelo))
+    println(" n ", n, " nL ", nL, "nk ", nK)
 
     # função objetivo 
     @objective(modelo, Min,
@@ -56,7 +57,7 @@ function minimiza_robusto(delta::Int64,gama::Int64,instancias)
     )
 
     # restrições
-   
+    
     @constraints(modelo, begin
         # cada cliente deve pertecer a uma única rota com l entregadores (rest. de fluxo)
         cons1[j in N], sum(x[i,j,l] for i in 1:n-1 for l in L) ==  1
@@ -65,6 +66,7 @@ function minimiza_robusto(delta::Int64,gama::Int64,instancias)
         
         # garante a consistencia temporal: veículo visita no modo 'l' saindo de 'i' para 'j'
         cons4[i in V, j in V, i!=j, l in L], w[j,l] >= w[i,l] + (t[i,j] + s[i,l]) * x[i,j,l] - max.(wb[i] - wa[j], 0)*(1 - x[i,j,l])
+        
         
         # inicia o servico ao cliente dentro da janela de tempo 
         cons5[i in V, l in L], wa[i] <= w[i,l] <= wb[i]
@@ -87,31 +89,58 @@ function minimiza_robusto(delta::Int64,gama::Int64,instancias)
         # se existir uma rota com l entregadores passando pelo cliente i, que o cliente pertenca a uma unica 
         # rota k essa rota deve conter os mesmos 'l' entregadores
         cons12[i in N, l in L], sum(z[i,k,l] for k in K) <= sum(x[i,j,l] for j in 2:n)
-
+        
         # se os clientes i e j pertencem a mesma rota k modo 'l', então devem ser atriubuídos 
         # a mesma designação de rota 
         cons13[i in N, j in N, i!=j, k in K, l in L], 1- x[i,j,l] - x[j,i,l] >= z[i,k,l] - z[j,k,l]
         
         # cada cliente i deve pertencer a uma única rota 'k' modulo 'l'
         cons14[i in N], sum(z[i,k,l] for k in K for l in L) == 1
-
+    
         # Determinisitico (not) 
         #cons15[k in K, l in L], sum(q[i]*z[i,k,l] for i in N) <= Q * y[k,l]
 
         # parte de incerteza do modelo robusto 
-        cons15[k in K, l in L], sum(q[i]*z[i,k,l] for i in N) + sum(alfa[i,k,l] for i in N) + gama*beta[k,l] <= Q * y[k,l]
+        #cons15[k in K, l in L], sum(q[i]*z[i,k,l] for i in N)  + sum(alfa[i,k,l] for i in N) + gama*beta[k,l] <= Q * y[k,l]
         cons16[i in N, k in K, l in L], alfa[i,k,l] + beta[k,l] >= Desvio[i] * z[i,k,l]
-        
     end)
     
 
     # Resolver o modelo
-    #println(modelo)
     optimize!(modelo) 
 
+    # imprimir resultado
+    println("......................................")
+    println(" Solução do Modelo Robusto PRVJTME    ")
+    println(" Gama (Γ) = $gama e Delta (δ) = $delta")
+    println("......................................")
+    status = JuMP.termination_status(modelo)
+
+    if status == MOI.OPTIMAL
+        obj_value = JuMP.objective_value(modelo)
+        println("Objective Value: ", obj_value)
+    else
+         println("Model was not solved to optimality. Status: ", status)
+    end
+    FO = JuMP.objective_value(modelo)
+    status = termination_status(modelo)
+    num_var = num_variables(modelo)
+    time = round(solve_time(modelo), digits=4)
+    #gap_relativo = relative_gap(modelo)
 
 
 
+    println(modelo)
+    println("Função Objetivo (FO) = ", FO)
+    println("Tempo (t) =", time)
+    #println(" Gap relativo = ", gap_relativo)
+    println("Status = ", status)
+    #println("Num Variaveis  = ", num_var)
+    #println("Has_values = ", has_values(modelo))
+    #println("Raw_Status = ", raw_status(modelo))   
+
+
+    return FO , time, modelo 
 
     
 end
