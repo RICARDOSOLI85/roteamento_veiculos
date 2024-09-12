@@ -1,6 +1,7 @@
 # Main Arquivo Principal 
 # versao 11/10/23 
 # modificacao:  13/10/2023, 14/10/2023, 17/10/2023 Inserindo a incerteza, Modelo e Impressão 
+# 12/setembro/2024 Atualizando para pasto do git hub e atualizando impressão 
 # Ricardo Soares Oliveira 
 
 
@@ -11,17 +12,18 @@
 # Importando os dados
 
 include("dados.jl")
-dados = importandoDados()
+arquivo = "R101.txt"
+dados = importando_dados(arquivo::String)
 
 # Importando Dados com Cópia do Depósito
 
 include("copia.jl")
-dados = copiaDeposito(dados)
+dados = copia_deposito(dados::NamedTuple)
 
 # Calculando a matriz das distâncias(e tempo)
 
 include("distancias.jl")                # Inclua o arquivo distancias.jl
-distancia = matrizDistancia(dados)         # Calculo da matriz das distância
+distancia = matriz_distancia(dados::NamedTuple)         # Calculo da matriz das distância
 
 
 # =====================================================================================================#
@@ -31,7 +33,7 @@ distancia = matrizDistancia(dados)         # Calculo da matriz das distância
 # Arquivo tomadorDecisao Inserir os dados
 
 include("tomadorDecisao.jl")
-parametros = tomadorDecisao()  # parametros (nL,nK,nE, p1,p2,p3,Q)
+parametros = tomador_decisao(arquivo::String)  # parametros (nL,nK,nE, p1,p2,p3,Q)
 
 # Calculo do Tempo de Serviço 
 
@@ -41,17 +43,18 @@ s = round.(matriz_tempo, digits=2)
 # Função que Calcula as intâncias  deterministicas necessárias para o  modelo 
 
 include("instancias.jl")
-instancias = calcularInstancias(distancia,dados,parametros,s)
+instancias = calcular_instancias(distancia::Matrix{Float64},
+                                 dados::NamedTuple,
+                                 parametros::NamedTuple,
+                                 s::Matrix{Float64})
 
 # Abrir os dados dos parametros 
 include("unroll.jl")
-n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unroll(instancias)
+n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unroll(instancias::NamedTuple)
 
 # ========================================================================
 #         Incerteza do Modelo 
 # =========================================================================
-
-
 
 
 # implementar a automatizacão dos testes 
@@ -62,7 +65,6 @@ n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unro
 #Gama = [1,2,3,4,5,6,7,8,9,10] # Buget de incerteza   2 
 #Delta= [20]             # Variação da demanda  3 
 #Gama = [0,2,5] # Buget de incerteza   3 
-
 
 
 Delta = 0 

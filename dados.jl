@@ -1,9 +1,10 @@
 # Importando dados para Modelo Tese Doutorado 
 # versao 11/10/23 
+# 12/09/2024 Modificando a entreada do arquivo leitura 
 # modificacao:  
 
 
-function importandoDados()
+function importando_dados(arquivo::String)
     # Abre o arquivo para leitura 
     inn = open("R101.txt", "r")
     

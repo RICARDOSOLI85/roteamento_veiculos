@@ -1,11 +1,11 @@
 
 # Adicionar na ultima linha a primeira para cópia depósito 
 # versao: 11/10/23 
-# modificacao:  
+# modificacao:  12/09/2024 apenas na função de entrada 
 
 
 
-function copiaDeposito(dados)
+function copia_deposito(dados::NamedTuple)
     # Acessando os dados dos vetores x,y,d,wa,wb 
 
     x = dados.x;        # Coordenadas da distância x

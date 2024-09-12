@@ -1,9 +1,9 @@
 # Calculo da Matrix das distâncias 
 # versao: 11/10/23 
-# modificacao:  
+# modificacao:  12/09/2024 apenas na função de entrada 
 
 
-function matrizDistancia(dados)
+function matriz_distancia(dados::NamedTuple)
     x = dados.x
     y = dados.y
     n= length(x)

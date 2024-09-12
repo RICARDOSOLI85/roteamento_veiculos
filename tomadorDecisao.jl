@@ -1,6 +1,6 @@
 # Modelo Matemático Robusto VRPTWMD
 # versao 12/10/23 
-# modificacao:  
+# modificacao:  12/09/2024 apenas na função de entrada arquivo 
 # Ricardo Soares Oliveira
 
 
@@ -9,8 +9,8 @@
 # =====================================================================================================#
 
 
-function tomadorDecisao()
-    println("Arquivo é R101.txt")
+function tomador_decisao(arquivo::String)
+    println("O arquivo que será implementado é :", arquivo)
     # Dados de Entrada do Tomador de Decisão 
     nL = 3    # Numero de Entregadores por veículo
     nK = 15   # Número de Veículos no depósito

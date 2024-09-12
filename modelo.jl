@@ -211,6 +211,6 @@ end
  
    
   
-  salvar_resultados(resultados, "resultados/InstanciaC101_Tabela2.txt")
+  #salvar_resultados(resultados, "resultados/InstanciaC101_Tabela2.txt")
 
 end

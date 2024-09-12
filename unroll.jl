@@ -4,7 +4,7 @@
 # Ricardo Soares Oliveira
 
 
-function unroll(instancias)
+function unroll(instancias::NamedTuple)
      # Lendo os arquivos dos parametros
   n = instancias.nV 
   nV =instancias.nV 

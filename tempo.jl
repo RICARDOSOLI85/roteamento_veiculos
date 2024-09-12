@@ -1,7 +1,7 @@
 
 # Calcula o tempo de serviço  
 # versao: 11/10/23 
-# modificacao:  
+# modificacao.
 
 
 function g(distancia,dados)

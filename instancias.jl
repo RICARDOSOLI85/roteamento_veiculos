@@ -1,10 +1,14 @@
 # Calcula os parametros usados no modelo 
 # versao: 11/10/23 
-# modificaçao:  
+# modificacao:  12/09/2024 apenas na função de entrada arquivo 
 
 
 
-function calcularInstancias(distancia,dados,parametros,s)
+function calcular_instancias(distancia::Matrix{Float64},
+    dados::NamedTuple,
+    parametros::NamedTuple,
+    s::Matrix{Float64})
+
     n = size(distancia,1)  # Obtém o tamanho da matriz assumindo ser quadrada
     # Dados do problema 
     nV = size(distancia,1)      # Número de vértices V = {1,...,n}
