@@ -52,6 +52,9 @@ instancias = calcular_instancias(distancia::Matrix{Float64},
 include("unroll.jl")
 n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unroll(instancias::NamedTuple)
 
+# Criar arquivo DataFrame para construir as tabelas de testes
+resultados = DataFrame()
+
 # ========================================================================
 #         Incerteza do Modelo 
 # =========================================================================
@@ -70,84 +73,30 @@ n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unro
 Delta = 0 
 Gama =  0 
 for gama in Gama 
-    for delta in Delta 
-        #global modelo
-        # Chama a função do Modelo 
-        include("modelo.jl")
-        restultados = minimizaModelo(delta,gama)
+    println("Testando para gama (Γ=$gama)")
+    for delta in Delta
+        println("Testando para delta (δ=$delta)") 
         
-        #include("imprimir.jl")
+        # implementando o modelo 
+        include("modelo.jl")
+        modelo, rotas, entre, dist  = minimizaModelo(delta,gama)
+
+        # imprimindo e salvando os dados 
+        include("metricas.jl")
+        metricas = calcular_metricas(modelo::Model,rotas::Int64, entre::Int64, dist::Float64, 
+        delta::Int64,gama::Int64,arquivo::String) 
+        
+        # Verificar e atualizar tabela de resultados para o Modelo 1
+        global resultados
+        if typeof(metricas) == DataFrame
+           resultados = vcat(resultados, metricas)
+        else
+            println("Erro: `metricas` não é um DataFrame válido.")
+        end
+        
             
         
     end 
 end
 
-
-
-# Imprimir os resultados 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Incluindo os parametros Gama (Buget de Incerteza) e Delta (Probabilidade)
-
-#include("incertezal.jl")
-#parametrosIncerteza = incerteza()
-
-# Incluir o modelo matemático 
-
-
-
-# Lista para armazenar os resultados 
-
-#=
-resultados = []
-
-
-function modeloIncerteza()
-    #delta = [15,20,30]
-    #gama = [0,1,2,3,4,5,6,7,8,9,10]
-    Delta = [0] 
-    Gama = [0] #,1,2,5] 
-
-    for delta in Delta 
-        for gama in Gama
-            modelo = minimizaModelo(delta,gama)
-            #valores = imprimirRotas(modelo)
-            # Armazene os restuldos
-            #push!(resultados,gama=gama, delta=delta)
-            #return valores 
-        end 
-    end 
-end 
-
-=# 
-#include("modelo.jl")
-#modelo = minimizaModelo(delta,gama)
-
-# -------------------------**********-------------
-# Arquive os resultdos em um arquivo CSV
-
-#using CSV
-#using DataFrames 
-#CSV.write("resultados.csv", DataFrame(resulatdos))
-
+CSV.write("resultados_$arquivo.csv", resultados)
