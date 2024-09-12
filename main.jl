@@ -52,10 +52,9 @@ for gama in Gama
     for delta in Delta
         println("Testar com delta (δ=$delta)")
         
-       minimiza_robusto(delta::Int64,gama::Int64,instancias::NamedTuple)
+       minimiza_robusto(delta::Int64,gama::Int64,instancias)
            
     end
        
 end  
 
-println("Iniciar a implementação do modelo com")

@@ -17,12 +17,12 @@ function calcular_instancias(c::Matrix{Float64},
     nK = df_parametros.nK[1]  # Numero de Veiculos 
     nE = df_parametros.nE[1]  # Numero de Entregadores disponiveis 
        
-    # Conjuntos do Problema:  
-    V = 1:nV              # Vertices 
+    # Conjuntos do Problema: Estava entre () **  
+    V = 1:nV             # Vertices 
     N = 1:nN             # Clientes 
     L = 1:nL             # Entregadores por Veiculos
     K = 1:nK             # Veiculos no deposito 
-    EN = length(N)          # dim conjunto de clientes 
+    EN = length(N)       # dim conjunto de clientes 
 
     # Tomador de decisão 
     p1 = df_parametros.p1[1]
