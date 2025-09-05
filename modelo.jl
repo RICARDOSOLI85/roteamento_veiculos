@@ -10,16 +10,18 @@ using Gurobi
 
 
 #function minimizaModelo(delta,gama, n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s)
-function minimizaModelo(delta,gama)
+function  minimizaModelo(delta,gama,
+    n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s)
 
   
+
   # Numero de Vértices 
   #n = nV
   #Nq = q                    # Demanda Nominal 
   #Dq = (delta*Nq)/100       # Desvio na demanda
   Desvio = (delta*q)/100
 
-  modelo = Model(Gurobi.Optimizer)
+  local modelo = Model(Gurobi.Optimizer)
   # atribuindo limite de tempo 
   
   set_optimizer_attribute(modelo, "TimeLimit", 3600) 
@@ -80,6 +82,12 @@ function minimizaModelo(delta,gama)
   # Impressão
   # println(modelo)
   println(".....................................")
+  println(" Imprimindo parâmetros               ")
+  println("......................................")
+  println("nL=", nL," nK=", nK," nE =", nE)
+  println("Capacidade Q =", Q)
+
+  println(".....................................")
   println(" Imprimindo a solução do  Modelo     ")
   println("......................................")
   
@@ -97,82 +105,83 @@ function minimizaModelo(delta,gama)
 
   println("      Fim do Teste                   ")
   println("......................................")
+
+ 
+   
   
 
 
 
-#-------------Desenho das rotas--------------------------
-println(".....................................")
-println(" Desenhando as rotas do Modelo     ")
-println("......................................")
+ #-------------Desenho das rotas--------------------------
+ println(".....................................")
+ println(" Desenhando as rotas do Modelo     ")
+ println("......................................")
 
-fim=n 
-conta = 0 
-# Adicional 
-entregadores = 0 
-distancia = 0
-rota = 0  
-for j=2:fim
-    for l in 1:nL
-        if round(JuMP.value(x[1,j,l])) > 0 
-            soma = d[1,j]
-            conta += 1
-            entregadores += l     # entregadores
-            print("Entr. l : $l\n") 
-            print("Rota $conta: ")
-            print(1)
-            inicio=j 
-            while inicio < fim 
-                for k=1:fim
-                    for p=1:nE
-                        if (k!=inicio) && (round(JuMP.value(x[inicio,k,l]))>0) && (inicio!=fim)
-                            print(" -> $inicio")
-                            soma+=d[inicio,k]
-                            inicio=k
-                        end 
-                    end 
-                end
-            end 
-            # Imprimindo os resultados 
-            distancia += soma  
-
-            println(" --> $fim")
-            println("Custo: $soma")
-            # Resultados 
-            println()
-            # Número de Rotas 
-            println("N. Rotas(NR) = $conta \n")
-            # Número de Entregadores 
-            print("N. Entregadores(ND) = $entregadores \n")
-            # Distância 
-            println("Distância = $distancia")
+ fim=n 
+ conta = 0 
+ entregadores = 0 
+ distancia = 0
+ rota = 0  
+ for j=2:fim
+     for l in 1:nL
+         if round(JuMP.value(x[1,j,l])) > 0 
+             soma = d[1,j]
+             conta += 1
+             entregadores += l     # entregadores
+             print("Entr. l : $l\n") 
+             print("Rota $conta: ")
+             print(1)
+             inicio=j 
+             while inicio < fim 
+                 for k=1:fim
+                     for p=1:nE
+                         if (k!=inicio) && (round(JuMP.value(x[inicio,k,l]))>0) && (inicio!=fim)
+                             print(" -> $inicio")
+                             soma+=d[inicio,k]
+                             inicio=k
+                         end 
+                     end 
+                 end
+             end 
+             # Imprimindo os resultados 
+             distancia += soma  
+ 
+             println(" --> $fim")
+             println("Custo: $soma")
+             # Resultados 
+             println()
+             # Número de Rotas 
+             println("N. Rotas(NR) = $conta \n")
+             # Número de Entregadores 
+             print("N. Entregadores(ND) = $entregadores \n")
+             # Distância 
+             println("Distância = $distancia")
                    
-        
-            println()
-            
+             println()
 
-                      
-        end
-    end
-end
+             
+                       
+         end
+     end
+ end
 
-println(".....................................")
-println(" Calculando as métricas do Modelo     ")
-println("......................................")
-# para distinguir entre as duas 
-rotas = conta 
-entre = entregadores
-dist = distancia
-println("N. Rotas (NR) = ", rotas)
-println("N. Entregadores(ND) = ",entre)
-println("Distância = ", dist)
-println(" ")
-println("      Fim dos Cálculos               ")
-println("......................................")
+ println(".....................................")
+ println(" Calculando as métricas do Modelo     ")
+ println("......................................")
+ # para distinguir entre as duas 
+ rotas = conta 
+ entre = entregadores
+ dist = distancia
+ println("N. Rotas (NR) = ", rotas)
+ println("N. Entregadores(ND) = ",entre)
+ println("Distância = ", dist)
+ println(" ")
+ println("      Fim dos Cálculos               ")
+ println("......................................")
 
  
  
- return modelo, rotas, entre, dist 
+ return FO, modelo, rotas, entre, dist
   
-  
+
 end

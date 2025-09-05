@@ -23,7 +23,8 @@ function tomador_decisao(arquivo::String)
 
     # Capacidade Muda de Acordo com o Arquivo
     
-    Q = 50 # Capacidade do Veículo 50--> R101,80,200--> C101  
+    #Q = 50 # Capacidade do Veículo 50--> R101
+    Q = 80 # Capacidade do Veículo 80,200--> C101  
     
     #parametros = Dict("nL"=> nL, "nK"=> nK, "nE"=>nE, "p1"=>p1,"p2"=>p2,"p3"=>p3,"Q"=>Q)
     parametros = (nL= nL, nK=nK, nE=nE, p1=p1,p2=p2,p3=p3,Q=Q)

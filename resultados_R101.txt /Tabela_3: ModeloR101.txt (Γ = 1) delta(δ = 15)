@@ -1,0 +1,20 @@
+...............................................
+ Imprimindo  a  solução do   Modelo R101.txt
+Parâmetros: Gama(Γ = 1) e delta(δ = 15)
+nL=3 nK=15 nE =20
+Capacidade Q =50
+................................................
+Função Objetivo (FO) = 9.566161
+Status é             : OPTIMAL
+Gap Relativo         = 0.0
+Tempo de solução (t) = 13.78
+N variáveis          = 4743
+.....................................
+ Calculando as métricas do Modelo     
+......................................
+N. Rotas (NR)       = 8
+N. Entregadores(ND) = 15
+Distância           = 661.61
+ 
+      Fim dos Cálculos               
+......................................

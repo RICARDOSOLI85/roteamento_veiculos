@@ -4,7 +4,8 @@
 # 12/setembro/2024 Atualizando para pasto do git hub e atualizando impressão 
 # Ricardo Soares Oliveira 
 
-
+using DataFrames
+using CSV
 
 #========================================================================================#
 #           Leitura dos dados e calculo da Matiz Distancias                             #
@@ -12,7 +13,7 @@
 # Importando os dados
 
 include("dados.jl")
-arquivo = "R101.txt"
+arquivo = "C101.txt"
 dados = importando_dados(arquivo::String)
 
 # Importando Dados com Cópia do Depósito
@@ -64,14 +65,14 @@ resultados = DataFrame()
 #Tabela 1,2,3 
 #Delta= [15]                    # Variação da demanda 1
 #Gama = [0,1,2,5]               # Buget de incerteza  1
-#Delta= [15,20,30]             # Variação da demanda  2 
-#Gama = [1,2,3,4,5,6,7,8,9,10] # Buget de incerteza   2 
-#Delta= [20]             # Variação da demanda  3 
-#Gama = [0,2,5] # Buget de incerteza   3 
+Delta= [15,20,30]               # Variação da demanda-  Tabela 2 
+Gama = [0,1,2,3,4,5,6,7,8,9,10] # Buget de incerteza  - Tabela 2 
+#Delta= [20]                   # Variação da demanda  3 
+#Gama = [0,2,5]                # Buget de incerteza   3 
 
 
-Delta = 0 
-Gama =  0 
+#Delta = 0
+#Gama =  0
 for gama in Gama 
     println("Testando para gama (Γ=$gama)")
     for delta in Delta
@@ -79,12 +80,14 @@ for gama in Gama
         
         # implementando o modelo 
         include("modelo.jl")
-        modelo, rotas, entre, dist  = minimizaModelo(delta,gama)
+        FO, modelo, rotas, entre, dist  = minimizaModelo(delta,gama,
+        n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s)
 
         # imprimindo e salvando os dados 
         include("metricas.jl")
-        metricas = calcular_metricas(modelo::Model,rotas::Int64, entre::Int64, dist::Float64, 
-        delta::Int64,gama::Int64,arquivo::String) 
+        metricas = calcular_metricas(FO,modelo::Model,rotas::Int64, entre::Int64, dist::Float64, 
+        delta::Int64,gama::Int64,arquivo::String,nL,nK,nE,Q)
+          
         
         # Verificar e atualizar tabela de resultados para o Modelo 1
         global resultados
@@ -93,10 +96,12 @@ for gama in Gama
         else
             println("Erro: `metricas` não é um DataFrame válido.")
         end
+
+        # Gravar CSV após cada iteração de gama e delta
+        CSV.write("Tabela_3_$arquivo.csv", resultados)
         
             
         
     end 
 end
 
-CSV.write("resultados_$arquivo.csv", resultados)
