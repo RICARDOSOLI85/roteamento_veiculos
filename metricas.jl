@@ -10,113 +10,111 @@ using JuMP
 
 TBW
 """
-function calcular_metricas(FO,modelo::Model,rotas::Int64, entre::Int64, dist::Float64, 
-         delta::Int64,gama::Int64,arquivo::String,nL,nK,nE,Q)
-         
-    
-    
+function calcular_metricas(FO, modelo::Model, rotas::Int64, entre::Int64, dist::Float64,
+    delta::Int64, gama::Int64, arquivo::String, nL, nK, nE, Q)
+
+
+
 
     # Status da Solução
     println("...............................................")
     println(" Imprimindo  a  solução do   Modelo $arquivo")
     println("Parâmetros: Gama(Γ = $gama) e delta(δ = $delta)")
-    println("nL=", nL," nK=", nK," nE =", nE)
-    println("Capacidade Q =", Q)     
+    println("nL=", nL, " nK=", nK, " nE =", nE)
+    println("Capacidade Q =", Q)
     println("................................................")
     # Status da Solução
-    
+
     #FO = JuMP.objective_value(modelo)
     FO
     status = termination_status(modelo)
     relativo_Gap = relative_gap(modelo)
     tempo = solve_time(modelo)
     nv = num_variables(modelo)
-    
 
-    println("Função Objetivo (FO) = ",round(FO,digits=6))
+
+    println("Função Objetivo (FO) = ", round(FO, digits=6))
     println("Status é             : ", status)
-    println("Gap Relativo         = ",round(relativo_Gap,digits=4))
-    println("Tempo de solução (t) = ", round(tempo,digits=2))
+    println("Gap Relativo         = ", round(relativo_Gap, digits=4))
+    println("Tempo de solução (t) = ", round(tempo, digits=2))
     println("N variáveis          = ", nv)
 
-   
+
 
     println(".....................................")
     println(" Calculando as métricas do Modelo     ")
     println("......................................")
     println("N. Rotas (NR)       = ", rotas)
-    println("N. Entregadores(ND) = ",entre) 
+    println("N. Entregadores(ND) = ", entre)
     println("Distância           = ", dist)
     println(" ")
-    println("      Fim dos Cálculos               ")    
+    println("      Fim dos Cálculos               ")
     println("......................................")
 
 
     # Salvar em um arquivo TXT 
     # definindo o diretorio 
-    diretorio = "resultados_$arquivo " 
+    diretorio = "resultados_$arquivo "
 
     # cirando o diretório
     mkpath(diretorio)
     filename = joinpath(diretorio, "Tabela_3: Modelo$arquivo (Γ = $gama) delta(δ = $delta)")
-   
+
     open(filename, "w") do file
-        println(file,"...............................................")
-        println(file," Imprimindo  a  solução do   Modelo $arquivo")
-        println(file,"Parâmetros: Gama(Γ = $gama) e delta(δ = $delta)")
-        println(file,"nL=", nL," nK=", nK," nE =", nE)
-        println(file,"Capacidade Q =", Q)   
-        println(file,"................................................")
-        println(file,"Função Objetivo (FO) = ", round(FO,digits=6))
-        println(file,"Status é             : ", status)
-        println(file,"Gap Relativo         = ",  round(relativo_Gap,digits=4))
-        println(file,"Tempo de solução (t) = ", round(tempo,digits=2)) 
-        println(file,"N variáveis          = ", nv)
-        println(file,".....................................")
-        println(file," Calculando as métricas do Modelo     ")
-        println(file,"......................................")
-        println(file,"N. Rotas (NR)       = ", rotas)
-        println(file,"N. Entregadores(ND) = ",entre)
-        println(file,"Distância           = ", dist)
-        println(file," ")
-        println(file,"      Fim dos Cálculos               ")
-        println(file,"......................................")
+        println(file, "...............................................")
+        println(file, " Imprimindo  a  solução do   Modelo $arquivo")
+        println(file, "Parâmetros: Gama(Γ = $gama) e delta(δ = $delta)")
+        println(file, "nL=", nL, " nK=", nK, " nE =", nE)
+        println(file, "Capacidade Q =", Q)
+        println(file, "................................................")
+        println(file, "Função Objetivo (FO) = ", round(FO, digits=6))
+        println(file, "Status é             : ", status)
+        println(file, "Gap Relativo         = ", round(relativo_Gap, digits=4))
+        println(file, "Tempo de solução (t) = ", round(tempo, digits=2))
+        println(file, "N variáveis          = ", nv)
+        println(file, ".....................................")
+        println(file, " Calculando as métricas do Modelo     ")
+        println(file, "......................................")
+        println(file, "N. Rotas (NR)       = ", rotas)
+        println(file, "N. Entregadores(ND) = ", entre)
+        println(file, "Distância           = ", dist)
+        println(file, " ")
+        println(file, "      Fim dos Cálculos               ")
+        println(file, "......................................")
     end
 
-    FO = round(FO,digits=4)
-    relativo_gap = round(relativo_Gap,digits=4)
-    tempo =  round(tempo,digits=2)
-    
+    FO = round(FO, digits=4)
+    relativo_gap = round(relativo_Gap, digits=4)
+    tempo = round(tempo, digits=2)
 
-     # Função Interna para construir o DataFrame das métricas
-     function construir_dataframe_metricas()
+
+    # Função Interna para construir o DataFrame das métricas
+    function construir_dataframe_metricas()
         return DataFrame(
             #....Instancia 
-            instancia = arquivo,
-            gama = gama,
-            delta = delta,
+            instancia=arquivo,
+            gama=gama,
+            delta=delta,
             #..Metricas do Modelo 
-            FunObj = FO,
-            NR = rotas,
-            ND = entre, 
-            dist = dist,
-            gap = relativo_gap,
+            FunObj=FO,
+            NR=rotas,
+            ND=entre,
+            dist=dist,
+            gap=relativo_gap,
             # Otimização  
-            status = string(status),
-            tempo = tempo,
-            NV  = nv, 
+            status=string(status),
+            tempo=tempo,
+            NV=nv,
             #...Capacidade
             Q=Q,
-            nK = nK,
-            nE = nE
-                        
-        )
-        
+            nK=nK,
+            nE=nE)
+
     end
-    
+
     # construir e retornar o DataFrame
     metricas = construir_dataframe_metricas()
 
-    return metricas 
-    
+    return metricas
+
 end

@@ -6,12 +6,12 @@
 
 function importando_dados(arquivo::String)
     # Abre o arquivo para leitura 
-    inn = open("R101.txt", "r")
-    
+    inn = open(arquivo, "r")
+
     # Pule as primeiras 9 linhas 
-    for _ in 1:9 
+    for _ in 1:9
         readline(inn)
-    end 
+    end
 
     # Inicialize vetores varios para cada coluna 
 
@@ -21,8 +21,8 @@ function importando_dados(arquivo::String)
     wa = Int[]
     wb = Int[]
 
-  
-       # Leia o arquivo linha a linha 
+
+    # Leia o arquivo linha a linha 
 
     for line in eachline(inn)
         # Divida a linha em partes usando separadores 
@@ -35,20 +35,20 @@ function importando_dados(arquivo::String)
             push!(q, parse(Float64, parts[4]))
             push!(wa, parse(Float64, parts[5]))
             push!(wb, parse(Float64, parts[6]))
-        end 
-    end 
+        end
+    end
 
     # Crie uma tupla para ler os dados 
-    
+
     #dadosEntrada = Dict("x" => x, "y" =>y, "q"=>q, "wa"=>wa , "wb"=> wb)
-    dados = (x = x, y =y, q=q, wa=wa , wb= wb)
+    dados = (x=x, y=y, q=q, wa=wa, wb=wb)
 
     # Feche o arquivo 
     close(inn)
 
     # Retorne a tupla com os dados 
 
-    return dados 
+    return dados
 
     # Imprimiir o primeiro valor de cada coluna 
     println("x[1]:  ", x[1])
@@ -56,5 +56,5 @@ function importando_dados(arquivo::String)
     println("q[1]:  ", q[1])
     println("wa[1]: ", wa[1])
     println("wb[1]: ", wb[1])
-    
+
 end

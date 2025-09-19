@@ -15,21 +15,21 @@ function tomador_decisao(arquivo::String)
     nL = 3    # Numero de Entregadores por veículo
     nK = 15   # Número de Veículos no depósito
     nE = 20   # Número de Entregadores no depósito
-    
+
     # Pesos definem os cutos unitário da:
     p1 = 1.0     # Rota
     p2 = 0.1    # Entregador
     p3 = 0.0001  # Distância
 
     # Capacidade Muda de Acordo com o Arquivo
-    
+
     #Q = 50 # Capacidade do Veículo 50--> R101
-    Q = 80 # Capacidade do Veículo 80,200--> C101  
-    
+    #Q = 80 # Capacidade do Veículo 80,200--> C101  
+    Q = 200 # Tabela 03 
     #parametros = Dict("nL"=> nL, "nK"=> nK, "nE"=>nE, "p1"=>p1,"p2"=>p2,"p3"=>p3,"Q"=>Q)
-    parametros = (nL= nL, nK=nK, nE=nE, p1=p1,p2=p2,p3=p3,Q=Q)
-    
+    parametros = (nL=nL, nK=nK, nE=nE, p1=p1, p2=p2, p3=p3, Q=Q)
+
     println("Entregadores = ", nL, " Veículos = ", nK, " , Entregadores Deposito= ", nE, " , Capacidade Q = ", Q)
     return parametros
-    
+
 end

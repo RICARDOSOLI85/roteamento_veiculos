@@ -9,12 +9,13 @@ using CSV
 
 #========================================================================================#
 #           Leitura dos dados e calculo da Matiz Distancias                             #
-#=======================================================================================# 
+#=======================================================================================#
 # Importando os dados
 
 include("dados.jl")
-arquivo = "C101.txt"
+arquivo = "C101_50.txt"
 dados = importando_dados(arquivo::String)
+
 
 # Importando Dados com Cópia do Depósito
 
@@ -45,13 +46,13 @@ s = round.(matriz_tempo, digits=2)
 
 include("instancias.jl")
 instancias = calcular_instancias(distancia::Matrix{Float64},
-                                 dados::NamedTuple,
-                                 parametros::NamedTuple,
-                                 s::Matrix{Float64})
+    dados::NamedTuple,
+    parametros::NamedTuple,
+    s::Matrix{Float64})
 
 # Abrir os dados dos parametros 
 include("unroll.jl")
-n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unroll(instancias::NamedTuple)
+n, nV, nN, nL, nK, nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s = unroll(instancias::NamedTuple)
 
 # Criar arquivo DataFrame para construir as tabelas de testes
 resultados = DataFrame()
@@ -63,45 +64,52 @@ resultados = DataFrame()
 
 # implementar a automatizacão dos testes 
 #Tabela 1,2,3 
-#Delta= [15]                    # Variação da demanda 1
-#Gama = [0,1,2,5]               # Buget de incerteza  1
-Delta= [15,20,30]               # Variação da demanda-  Tabela 2 
-Gama = [0,1,2,3,4,5,6,7,8,9,10] # Buget de incerteza  - Tabela 2 
+#Delta = [15, 20, 30]                    # Variação da demanda 1
+#Gama = [0]                          # Buget de incerteza  1
+#Delta = [15, 20, 30]               # Variação da demanda-  Tabela 2 
+#Gama = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] # Buget de incerteza  - Tabela 2 
 #Delta= [20]                   # Variação da demanda  3 
 #Gama = [0,2,5]                # Buget de incerteza   3 
 
+#Experimento 01
+Delta = [15]
+Gama = [0, 1, 2, 5]
 
-#Delta = 0
-#Gama =  0
-for gama in Gama 
+#Experimento 09 Com n=50 clientes 
+Delta = [15]
+Gama = [0, 1, 2, 5]
+
+for gama in Gama
     println("Testando para gama (Γ=$gama)")
     for delta in Delta
-        println("Testando para delta (δ=$delta)") 
-        
+        println("Testando para delta (δ=$delta)")
+
         # implementando o modelo 
         include("modelo.jl")
-        FO, modelo, rotas, entre, dist  = minimizaModelo(delta,gama,
-        n,nV,nN,nL,nK,nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s)
+        FO, modelo, rotas, entre, dist = minimizaModelo(delta, gama,
+            n, nV, nN, nL, nK, nE, V, N, L, K, EN, p1, p2, p3, Q, q, wa, wb, d, t, M, E, s)
 
         # imprimindo e salvando os dados 
+
+
         include("metricas.jl")
-        metricas = calcular_metricas(FO,modelo::Model,rotas::Int64, entre::Int64, dist::Float64, 
-        delta::Int64,gama::Int64,arquivo::String,nL,nK,nE,Q)
-          
-        
+        metricas = calcular_metricas(FO, modelo::Model, rotas::Int64, entre::Int64, dist::Float64,
+            delta::Int64, gama::Int64, arquivo::String, nL, nK, nE, Q)
+
+
         # Verificar e atualizar tabela de resultados para o Modelo 1
         global resultados
         if typeof(metricas) == DataFrame
-           resultados = vcat(resultados, metricas)
+            resultados = vcat(resultados, metricas)
         else
             println("Erro: `metricas` não é um DataFrame válido.")
         end
 
         # Gravar CSV após cada iteração de gama e delta
-        CSV.write("Tabela_3_$arquivo.csv", resultados)
-        
-            
-        
-    end 
+        CSV.write("Experimento_09:$arquivo.csv", resultados)
+
+
+
+    end
 end
 
